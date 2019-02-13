@@ -29,4 +29,5 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_8ff51126ba23_key -iv $encrypted_8ff51126ba23_iv
   -in secrets.tar.enc -out secrets.tar -d
 - tar xvf secrets.tar
+- mkdir ./src/test/resources
 - mv travis-config.json ./src/test/resources/config.json
