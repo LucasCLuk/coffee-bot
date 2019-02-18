@@ -3,12 +3,11 @@ package commands
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
 import net.dv8tion.jda.core.EmbedBuilder
+import utils.format
 import utils.guildSettings
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import java.text.NumberFormat
 import java.time.Instant
-import java.util.*
 
 class GuildStats : Command() {
 
@@ -25,26 +24,26 @@ class GuildStats : Command() {
         val messageData = settings.getGuildStats()
         val embedBuilder = EmbedBuilder()
             .setTitle("${event.guild.name} Stats")
-            .setDescription("Recorded : ${NumberFormat.getNumberInstance(Locale.US).format(messageData.totalMessages)} Messages.")
+            .setDescription("Recorded : ${messageData.totalMessages.format()} Messages.")
             .addField(
                 "Top Channels",
                 messageData.topChannels.joinToString("\n", transform = {
                     val channel = event.guild.getTextChannelById(it.first)?.asMention ?: it.first
-                    "$channel - ${it.second} Messages"
+                    "$channel - ${it.second.format()} Messages"
                 }), false
             )
             .addField(
                 "Top Authors",
                 messageData.topAuthors.joinToString("\n", transform = {
                     val author = event.guild.getMemberById(it.first)?.asMention ?: it.first
-                    "$author - ${it.second} Messages"
+                    "$author - ${it.second.format()} Messages"
                 }), false
             )
             .addField(
                 "Top Emojis",
                 messageData.topEmotes.joinToString("\n", transform = {
                     val emote = event.guild.getEmoteById(it.first)?.asMention ?: it.first
-                    "$emote - ${it.second}"
+                    "$emote - ${it.second.format()}"
                 }), false
             )
             .setThumbnail(event.guild.iconUrl)
