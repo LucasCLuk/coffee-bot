@@ -6,7 +6,9 @@ import net.dv8tion.jda.core.EmbedBuilder
 import utils.guildSettings
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.time.Instant
+import java.util.*
 
 class GuildStats : Command() {
 
@@ -23,6 +25,7 @@ class GuildStats : Command() {
         val messageData = settings.getGuildStats()
         val embedBuilder = EmbedBuilder()
             .setTitle("${event.guild.name} Stats")
+            .setDescription("Recorded : ${NumberFormat.getNumberInstance(Locale.US).format(messageData.totalMessages)} Messages.")
             .addField(
                 "Top Channels",
                 messageData.topChannels.joinToString("\n", transform = {

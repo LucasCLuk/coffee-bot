@@ -11,4 +11,5 @@ object EmojisTable : LongIdTable() {
     val author = EmojisTable.reference("author", MembersTable, ReferenceOption.CASCADE)
     val emojiId = long("emojiId")
 
+
 }

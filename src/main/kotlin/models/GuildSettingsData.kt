@@ -419,27 +419,35 @@ class GuildSettingsData(
         return getMessageInformation(messageId.toString())
     }
 
-    fun getGlobalMessageStatsByChannel(): List<Pair<Long, Int>> {
+    private fun getGlobalMessageStatsByChannel(): List<Pair<Long, Int>> {
         return transaction {
             MessagesTable.slice(MessagesTable.channel, MessagesTable.channel.count())
                 .select {
                     MessagesTable.guild eq guild.idLong
-                }.groupBy(MessagesTable.channel).orderBy(MessagesTable.channel.count()).limit(5).reversed()
+                }.groupBy(MessagesTable.channel).orderBy(MessagesTable.channel.count(), isAsc = false).limit(5)
                 .map {
                     it[MessagesTable.channel].value to it[MessagesTable.channel.count()]
                 }
         }
     }
 
-    fun getGlobalMessageStatsByAuthor(): List<Pair<Long, Int>> {
+    private fun getGlobalMessageStatsByAuthor(): List<Pair<Long, Int>> {
         return transaction {
             MessagesTable.slice(MessagesTable.author, MessagesTable.author.count())
                 .select {
                     MessagesTable.guild eq guild.idLong
-                }.groupBy(MessagesTable.author).orderBy(MessagesTable.author.count()).limit(5).reversed()
+                }.groupBy(MessagesTable.author).orderBy(MessagesTable.author.count(), isAsc = false).limit(5)
                 .map {
                     it[MessagesTable.author].value to it[MessagesTable.author.count()]
                 }
+        }
+    }
+
+    private fun getGuildMessageCount(): Int {
+        return transaction {
+            MessagesTable.select {
+                MessagesTable.guild eq guild.idLong
+            }.count()
         }
     }
 
@@ -447,7 +455,8 @@ class GuildSettingsData(
         return GuildStatsSnapshot(
             getGlobalMessageStatsByChannel(),
             getGlobalMessageStatsByAuthor(),
-            getTopEmojis()
+            getTopEmojis(),
+            getGuildMessageCount()
         )
     }
 
@@ -543,7 +552,7 @@ class GuildSettingsData(
             EmojisTable.slice(EmojisTable.emojiId, EmojisTable.emojiId.count())
                 .select {
                     EmojisTable.guild.eq(guildEntitySettings.id)
-                }.groupBy(EmojisTable.emojiId).orderBy(EmojisTable.emojiId.count()).limit(10).reversed()
+                }.groupBy(EmojisTable.emojiId).orderBy(EmojisTable.emojiId.count(), isAsc = false).limit(5)
                 .map {
                     it[EmojisTable.emojiId] to it[EmojisTable.emojiId.count()]
                 }
@@ -555,10 +564,10 @@ class GuildSettingsData(
             EmojisTable.slice(EmojisTable.emojiId, EmojisTable.emojiId.count())
                 .select {
                     EmojisTable.guild.eq(guildEntitySettings.id).and(EmojisTable.channel.eq(channel))
-                }.groupBy(EmojisTable.emojiId).orderBy(EmojisTable.emojiId.count()).limit(10)
+                }.groupBy(EmojisTable.emojiId).orderBy(EmojisTable.emojiId.count(), isAsc = false).limit(5)
                 .map {
                     it[EmojisTable.emojiId] to it[EmojisTable.emojiId.count()]
-                }.reversed()
+                }
         }
     }
 
@@ -571,8 +580,7 @@ class GuildSettingsData(
             EmojisTable.slice(EmojisTable.author, EmojisTable.author.count())
                 .select {
                     EmojisTable.guild.eq(guildEntitySettings.id)
-                }.groupBy(EmojisTable.author).orderBy(EmojisTable.author.count()).limit(10)
-                .reversed()
+                }.groupBy(EmojisTable.author).orderBy(EmojisTable.author.count(), false).limit(5)
                 .map {
                     EmojiUseSnapshot(
                         it[EmojisTable.author].value,
@@ -587,8 +595,7 @@ class GuildSettingsData(
             EmojisTable.slice(EmojisTable.author, EmojisTable.author.count())
                 .select {
                     EmojisTable.guild.eq(guildEntitySettings.id).and(EmojisTable.channel.eq(channel.idLong))
-                }.groupBy(EmojisTable.author).orderBy(EmojisTable.author.count()).limit(10)
-                .reversed()
+                }.groupBy(EmojisTable.author).orderBy(EmojisTable.author.count(), false).limit(10)
                 .map {
                     EmojiUseSnapshot(
                         it[EmojisTable.author].value,

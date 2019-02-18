@@ -19,5 +19,6 @@ data class EmojiUseSnapshot(val authorId: Long, val count: Int)
 data class GuildStatsSnapshot(
     val topChannels: List<Pair<Long, Int>>,
     val topAuthors: List<Pair<Long, Int>>,
-    val topEmotes: List<Pair<Long, Int>>
+    val topEmotes: List<Pair<Long, Int>>,
+    val totalMessages: Int
 )
