@@ -547,12 +547,12 @@ class GuildSettingsData(
         }
     }
 
-    fun getTopEmojis(): List<Pair<Long, Int>> {
+    fun getTopEmojis(limit: Int = 10): List<Pair<Long, Int>> {
         return transaction {
             EmojisTable.slice(EmojisTable.emojiId, EmojisTable.emojiId.count())
                 .select {
                     EmojisTable.guild.eq(guildEntitySettings.id)
-                }.groupBy(EmojisTable.emojiId).orderBy(EmojisTable.emojiId.count(), isAsc = false).limit(5)
+                }.groupBy(EmojisTable.emojiId).orderBy(EmojisTable.emojiId.count(), isAsc = false).limit(limit)
                 .map {
                     it[EmojisTable.emojiId] to it[EmojisTable.emojiId.count()]
                 }
@@ -575,12 +575,12 @@ class GuildSettingsData(
         return getTopEmojisByChannel(channel.idLong)
     }
 
-    fun getTopEmojisByUsers(): List<EmojiUseSnapshot> {
+    fun getTopEmojisByUsers(limit: Int = 10): List<EmojiUseSnapshot> {
         return transaction {
             EmojisTable.slice(EmojisTable.author, EmojisTable.author.count())
                 .select {
                     EmojisTable.guild.eq(guildEntitySettings.id)
-                }.groupBy(EmojisTable.author).orderBy(EmojisTable.author.count(), false).limit(5)
+                }.groupBy(EmojisTable.author).orderBy(EmojisTable.author.count(), false).limit(limit)
                 .map {
                     EmojiUseSnapshot(
                         it[EmojisTable.author].value,

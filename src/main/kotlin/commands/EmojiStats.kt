@@ -14,6 +14,7 @@ class EmojiStats : Command() {
     init {
         name = "estats"
         help = "Displays a Leader-board of the top 10 emojis in this server"
+        children = arrayOf(LeaderBoardDump())
     }
 
 
@@ -36,10 +37,10 @@ class EmojiStats : Command() {
         val embed = EmbedBuilder()
         embed.setTitle("${event.guild.name} emoji stats")
         embed.setTimestamp(Instant.now())
-        embed.addField("Top Emojis", emojiData.joinToString("\n", transform = {
+        embed.setDescription(emojiData.joinToString("\n", transform = {
             val emote = event.guild.getEmoteById(it.first)
             "${emote.asMention} - ${it.second.format()}"
-        }), true)
+        }))
         embed.addField("Top Emoji Users", playerEmojiStats.joinToString("\n", transform = {
             val member = event.guild.getMemberById(it.authorId)?.asMention ?: it.authorId
             "$member - ${it.count.format()}"
@@ -47,4 +48,26 @@ class EmojiStats : Command() {
 
         event.reply(embed.build())
     }
+
+    inner class LeaderBoardDump : Command() {
+
+        init {
+            name = "dump"
+            help = "Dumps the leaderboard of emojis into an attachment"
+        }
+
+        override fun execute(event: CommandEvent) {
+            val settingsData = event.guildSettings()
+            val emojiData = settingsData.getTopEmojis(100)
+            val file = createTempFile()
+            file.writeText(emojiData.joinToString("\n", transform = {
+                val emote = event.guild.getEmoteById(it.first)
+                "${emote.name} - ${it.second.format()}"
+            }))
+
+            event.reply(file, "EmojiLeaderBoard.txt")
+            file.delete()
+        }
+    }
+
 }
