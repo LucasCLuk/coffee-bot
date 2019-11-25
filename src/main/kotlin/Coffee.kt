@@ -1,18 +1,13 @@
 import com.jagrosh.jdautilities.command.CommandClientBuilder
 import com.jagrosh.jdautilities.examples.command.ShutdownCommand
-import com.squareup.moshi.Moshi
 import commands.*
-import models.Config
 import models.GuildSettingsData
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.JDABuilder
-import net.dv8tion.jda.core.entities.Game
-import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.entities.Guild
 import org.jetbrains.exposed.sql.Database
 import utils.SchemaManager
-import java.io.File
-import java.io.FileNotFoundException
-import java.nio.file.Paths
 
 
 fun main(args: Array<String>) {
@@ -30,13 +25,13 @@ class Coffee {
 
         val config = loadConfig()
 
-        val jdaBuilder = JDABuilder(config.token)
+        val jdaBuilder = JDABuilder(config["discord_token"])
 
         database = Database.connect(
-            "jdbc:postgresql://${config.database.host}:${config.database.port}/${config.database.database}",
+            "${config["database_url"]}",
             driver = "org.postgresql.Driver",
-            user = config.database.user,
-            password = config.database.password
+            user = config.getOrDefault("postgres_user", ""),
+            password = config.getOrDefault("postgres_password", "")
         )
         SchemaManager.setup()
         val eventListener = CoffeeWatcher(guildSettings)
@@ -46,7 +41,7 @@ class Coffee {
             .setLinkedCacheSize(1000)
             .setAlternativePrefix("!!!")
             .setEmojis("<:check:518842990924529684>", "⚠", "⁉")
-            .setGame(Game.of(Game.GameType.WATCHING, "with a million eyes"))
+            .setActivity(Activity.watching("with a million eyes"))
             .setGuildSettingsManager {
                 guildSettings[it.id]
             }
@@ -66,23 +61,19 @@ class Coffee {
                 Eval()
             )
             .build()
-        jdaBuilder.addEventListener(eventListener, commands)
+        jdaBuilder.addEventListeners(eventListener, commands)
         jda = jdaBuilder.build()
         getGuildSettings()
     }
 
-    private fun loadConfig(): Config {
-        val cwd = Paths.get("").toAbsolutePath().toString()
-        val configFile = File("$cwd/config.json")
-        if (configFile.exists()) {
-            return File("$cwd/config.json").readText().let {
-                val moshi = Moshi.Builder().build()
-                val jsonAdapter = moshi.adapter<Config>(Config::class.java)
-                return@let jsonAdapter.fromJson(it)
-            }!!
-        } else {
-            throw FileNotFoundException("config.json file not found")
-        }
+    private fun loadConfig(): Map<String, String> {
+        return mapOf(
+            "database_url" to (System.getenv("POSTGRES_URL") ?: ""),
+            "postgres_user" to (System.getenv("POSTGRES_USER") ?: ""),
+            "postgres_password" to (System.getenv("POSTGRES_PASSWORD") ?: ""),
+            "discord_token" to (System.getenv("DISCORD_TOKEN") ?: "")
+        )
+
     }
 
 
@@ -91,6 +82,7 @@ class Coffee {
         for (guild: Guild in jda.guilds) {
             guildSettings[guild.id] = GuildSettingsData(guild)
         }
+        println("Logged in as ${jda.selfUser}")
         println("I am Ready!")
     }
 

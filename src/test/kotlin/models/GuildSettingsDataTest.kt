@@ -2,9 +2,9 @@ package models
 
 import com.squareup.moshi.Moshi
 import io.mockk.mockk
-import net.dv8tion.jda.core.entities.impl.EmoteImpl
-import net.dv8tion.jda.core.entities.impl.GuildImpl
-import net.dv8tion.jda.core.entities.impl.JDAImpl
+import net.dv8tion.jda.internal.JDAImpl
+import net.dv8tion.jda.internal.entities.EmoteImpl
+import net.dv8tion.jda.internal.entities.GuildImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll

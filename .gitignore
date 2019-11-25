@@ -142,13 +142,8 @@ gradle-app.setting
 
 
 # config files
-config.json
 \.idea/
 
 src/main/resources/config\.json~
 
 src/test/resources/travis-config\.json
-deploy.sh
-id_rsa
-secrets\.tar
-travis-config\.json

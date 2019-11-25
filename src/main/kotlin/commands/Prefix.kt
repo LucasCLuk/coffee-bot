@@ -3,7 +3,7 @@ package commands
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
 import models.GuildSettingsData
-import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.api.EmbedBuilder
 import utils.guildSettings
 
 class Prefix : Command() {

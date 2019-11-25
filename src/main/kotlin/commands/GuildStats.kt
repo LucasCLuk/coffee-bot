@@ -2,7 +2,7 @@ package commands
 
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
-import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.api.EmbedBuilder
 import utils.format
 import utils.guildSettings
 import java.math.RoundingMode

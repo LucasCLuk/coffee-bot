@@ -2,7 +2,7 @@ package commands
 
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
-import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.api.EmbedBuilder
 import utils.Emoji
 import utils.cleanupCode
 import utils.randomColor
@@ -45,7 +45,7 @@ class Eval : Command() {
         engine.put("channel", event.channel)
         engine.put("tc", event.textChannel)
         engine.put("pm", event.privateChannel)
-        engine.put("vc", event.member.voiceState.channel)
+        engine.put("vc", event.member.voiceState?.channel)
 
         engine.put("author", event.author)
         engine.put("member", event.member)

@@ -4,10 +4,10 @@ import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
 import models.tables.MessagesTable
-import net.dv8tion.jda.core.EmbedBuilder
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.entities.MessageEmbed
-import net.dv8tion.jda.core.utils.MiscUtil
+import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.utils.TimeUtil
 import utils.findMember
 import utils.format
 import utils.guildSettings
@@ -36,7 +36,7 @@ class MemberStats : Command() {
         var timeAgo: String? = null
         if (lastMessage != null) {
             timeAgo =
-                    TimeAgo.using(MiscUtil.getCreationTime(lastMessage[MessagesTable.id].value).toEpochSecond() * 1000)
+                TimeAgo.using(TimeUtil.getTimeCreated(lastMessage[MessagesTable.id].value).toEpochSecond() * 1000)
         }
         return EmbedBuilder()
             .setAuthor(target.effectiveName, target.user.avatarUrl)

@@ -1,7 +1,7 @@
 package utils
 
 import models.GuildHistorySnapshot
-import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.api.JDA
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChartBuilder
 import org.knowm.xchart.XYSeries

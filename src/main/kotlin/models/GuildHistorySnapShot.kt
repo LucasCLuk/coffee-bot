@@ -1,6 +1,6 @@
 package models
 
-import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.api.entities.Guild
 import java.util.*
 
 data class GuildHistorySnapshot(val guild: Guild, val history: MutableList<ChannelHistorySnapShot>) {

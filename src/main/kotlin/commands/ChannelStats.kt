@@ -3,9 +3,9 @@ package commands
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.doc.standard.Error
-import net.dv8tion.jda.core.EmbedBuilder
-import net.dv8tion.jda.core.entities.MessageEmbed
-import net.dv8tion.jda.core.entities.TextChannel
+import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.entities.TextChannel
 import utils.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,7 +27,7 @@ class ChannelStats : Command() {
         val settingsData = event.guildSettings()
         val channelMessageCount = settingsData.getChannelMessageCount(target.idLong)
         val messages = settingsData.getChannelMostActive(target.idLong)
-        val joinDateString = SimpleDateFormat().format(Date.from(event.guild.selfMember.joinDate.toInstant()))
+        val joinDateString = SimpleDateFormat().format(Date.from(event.guild.selfMember.timeCreated.toInstant()))
         val channelMessageCountToday = settingsData.getChannelMessageCountToday(target.idLong)
         val embed = EmbedBuilder()
             .setAuthor(target.name)

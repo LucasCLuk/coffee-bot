@@ -3,7 +3,7 @@ package commands
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
 import models.EmojiUseSnapshot
-import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.api.EmbedBuilder
 import utils.findArgChannelOrDefault
 import utils.format
 import utils.guildSettings
@@ -39,7 +39,7 @@ class EmojiStats : Command() {
         embed.setTimestamp(Instant.now())
         embed.setDescription(emojiData.joinToString("\n", transform = {
             val emote = event.guild.getEmoteById(it.first)
-            "${emote.asMention} - ${it.second.format()}"
+            "${emote?.asMention} - ${it.second.format()}"
         }))
         embed.addField("Top Emoji Users", playerEmojiStats.joinToString("\n", transform = {
             val member = event.guild.getMemberById(it.authorId)?.asMention ?: it.authorId
@@ -62,7 +62,7 @@ class EmojiStats : Command() {
             val file = createTempFile()
             file.writeText(emojiData.joinToString("\n", transform = {
                 val emote = event.guild.getEmoteById(it.first)
-                "${emote.name} - ${it.second.format()}"
+                "${emote?.name} - ${it.second.format()}"
             }))
 
             event.reply(file, "EmojiLeaderBoard.txt")

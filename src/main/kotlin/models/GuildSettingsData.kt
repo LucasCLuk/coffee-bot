@@ -8,10 +8,10 @@ import models.tables.ChannelsTable
 import models.tables.EmojisTable
 import models.tables.MessagesTable
 import models.tables.PrefixesTable
-import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.*
-import net.dv8tion.jda.core.events.message.MessageDeleteEvent
-import net.dv8tion.jda.core.utils.MiscUtil
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent
+import net.dv8tion.jda.api.utils.TimeUtil
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -111,7 +111,7 @@ class GuildSettingsData(
                 this.guild = guildEntity
                 this.created = DateTime(
                     Date.from(
-                        MiscUtil.getCreationTime(
+                        TimeUtil.getTimeCreated(
                             channel
                         ).toInstant()
                     )
@@ -130,7 +130,11 @@ class GuildSettingsData(
         } else {
             channelEntityList[channel] = transaction {
                 ChannelEntity.new(channel) {
-                    created = DateTime(MiscUtil.getCreationTime(channel).toInstant().toEpochMilli())
+                    created = DateTime(
+                        TimeUtil.getTimeCreated(
+                            channel
+                        ).toInstant().toEpochMilli()
+                    )
                     guild = guildEntitySettings
                 }
             }
@@ -507,7 +511,7 @@ class GuildSettingsData(
                 content = messageContent
                 guild = guildEntitySettings
                 channel = getOrCreateChannel(channelId)
-                timestamp = DateTime(Date.from(MiscUtil.getCreationTime(messageId).toInstant()))
+                timestamp = DateTime(Date.from(TimeUtil.getTimeCreated(messageId).toInstant()))
             }
         }
     }
@@ -529,7 +533,7 @@ class GuildSettingsData(
                 guild = guildEntitySettings
                 channel = getOrCreateChannel(event.channel.idLong)
                 author = getOrCreateAuthor(event.author.idLong)
-                timestamp = DateTime(Date.from(event.message.creationTime.toInstant()))
+                timestamp = DateTime(Date.from(event.message.timeCreated.toInstant()))
             }
         }
     }

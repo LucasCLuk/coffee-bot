@@ -4,10 +4,9 @@ import com.jagrosh.jdautilities.command.CommandClient
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import models.GuildSettingsData
-import net.dv8tion.jda.core.EmbedBuilder
-import net.dv8tion.jda.core.MessageBuilder
-import net.dv8tion.jda.core.entities.*
-import net.dv8tion.jda.core.requests.restaction.MessageAction
+import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.requests.restaction.MessageAction
 import org.jetbrains.exposed.sql.Between
 import org.jetbrains.exposed.sql.ExpressionWithColumnType
 import org.jetbrains.exposed.sql.Op
@@ -87,8 +86,5 @@ fun MessageChannel.sendChart(chart: InputStream): MessageAction {
     val embed = EmbedBuilder()
         .setImage("attachment://chart.png")
         .build()
-    val message = MessageBuilder()
-        .setEmbed(embed)
-        .build()
-    return this.sendFile(chart, "chart.png", message)
+    return this.sendFile(chart, "chart.png").embed(embed)
 }

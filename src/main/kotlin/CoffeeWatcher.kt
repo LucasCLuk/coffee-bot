@@ -3,13 +3,13 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.command.CommandListener
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import models.GuildSettingsData
-import net.dv8tion.jda.core.events.channel.text.TextChannelCreateEvent
-import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent
-import net.dv8tion.jda.core.events.guild.GuildLeaveEvent
-import net.dv8tion.jda.core.events.message.MessageDeleteEvent
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent
-import net.dv8tion.jda.core.hooks.ListenerAdapter
+import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent
+import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import net.dv8tion.jda.api.hooks.ListenerAdapter
 import utils.guildSettings
 import java.util.regex.Pattern
 
@@ -27,7 +27,11 @@ class CoffeeWatcher(private val guildSettings: MutableMap<String, GuildSettingsD
                 val notBot = !event.author.isBot
                 val notWebhook = !event.isWebhookMessage
                 val notEmpty = event.message.contentDisplay.isNotEmpty()
-                val notDM = event.privateChannel == null
+                val notDM = try {
+                    false
+                } catch (e: IllegalStateException) {
+                    true
+                }
                 if (booleanArrayOf(notBot, notWebhook, notEmpty, notDM).all {
                         it
                     }) {
